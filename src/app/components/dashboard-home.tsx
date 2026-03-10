@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -8,59 +9,108 @@ import {
   ArrowUpRight,
   Clock,
   Smartphone,
+  Loader2,
+  Wallet,
 } from "lucide-react";
+import { useAuth } from "./auth-context";
+import { projectId } from "/utils/supabase/info";
 
-const recentScans = [
-  { id: 1, time: "2 minutes ago", device: "iPhone", location: "In-store" },
-  { id: 2, time: "18 minutes ago", device: "Android", location: "In-store" },
-  { id: 3, time: "1 hour ago", device: "iPhone", location: "Receipt QR" },
-  { id: 4, time: "3 hours ago", device: "Android", location: "Table tent" },
-  { id: 5, time: "5 hours ago", device: "iPhone", location: "In-store" },
-];
+interface Scan {
+  timestamp: string;
+  device: string;
+  userAgent: string;
+}
+
+interface Stats {
+  total: number;
+  today: number;
+  thisWeek: number;
+  avgDaily: string;
+}
 
 export function DashboardHome() {
+  const { profile, user, apiCall } = useAuth();
+  const [stats, setStats] = useState<Stats>({ total: 0, today: 0, thisWeek: 0, avgDaily: "0" });
+  const [recentScans, setRecentScans] = useState<Scan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [statsRes, scansRes] = await Promise.all([
+          apiCall("/stats"),
+          apiCall("/scans"),
+        ]);
+        if (statsRes.ok) {
+          const data = await statsRes.json();
+          setStats(data.stats);
+        }
+        if (scansRes.ok) {
+          const data = await scansRes.json();
+          setRecentScans(data.scans.slice(0, 5));
+        }
+      } catch (err) {
+        console.log("Error fetching dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [apiCall]);
+
+  const formatTime = (timestamp: string) => {
+    const diff = Date.now() - new Date(timestamp).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "Just now";
+    if (mins < 60) return `${mins} min ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
+
+  const businessName = profile?.businessName || "Your Business";
+  const scanUrl = user?.id
+    ? `https://${projectId}.supabase.co/functions/v1/make-server-6cea9865/r/${user.id}`
+    : "";
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-[#111827]" style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-          Welcome back, Joe! 👋
+          Welcome back, {profile?.name?.split(" ")[0] || "there"}!
         </h1>
         <p className="text-[#6B7280]" style={{ fontSize: "0.875rem" }}>
           Here's how your QR code is performing
         </p>
       </div>
 
+      {/* Balance Banner */}
+      {profile?.balance !== undefined && (
+        <div className="bg-gradient-to-r from-[#10B981] to-[#047857] rounded-xl p-5 text-white flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p style={{ fontSize: "0.875rem", fontWeight: 500, opacity: 0.9 }}>Account Balance</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 700 }}>${(profile.balance ?? 0).toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p style={{ fontSize: "0.75rem", opacity: 0.8 }}>Free credit applied on signup</p>
+            <p style={{ fontSize: "0.875rem", fontWeight: 600 }}>Use for WhatsApp messages</p>
+          </div>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          {
-            label: "Total Scans",
-            value: "247",
-            change: "+12%",
-            icon: ScanLine,
-            color: "#10B981",
-          },
-          {
-            label: "This Week",
-            value: "38",
-            change: "+8%",
-            icon: TrendingUp,
-            color: "#10B981",
-          },
-          {
-            label: "Today",
-            value: "7",
-            change: "+3",
-            icon: QrCode,
-            color: "#F59E0B",
-          },
-          {
-            label: "Avg. Daily",
-            value: "5.4",
-            change: "Steady",
-            icon: Clock,
-            color: "#047857",
-          },
+          { label: "Total Scans", value: String(stats.total), change: `${stats.total > 0 ? "+" : ""}${stats.total}`, icon: ScanLine, color: "#10B981" },
+          { label: "This Week", value: String(stats.thisWeek), change: `+${stats.thisWeek}`, icon: TrendingUp, color: "#10B981" },
+          { label: "Today", value: String(stats.today), change: `+${stats.today}`, icon: QrCode, color: "#F59E0B" },
+          { label: "Avg. Daily", value: stats.avgDaily, change: "Steady", icon: Clock, color: "#047857" },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -82,7 +132,7 @@ export function DashboardHome() {
               </span>
             </div>
             <p className="text-[#111827]" style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-              {stat.value}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : stat.value}
             </p>
             <p className="text-[#6B7280]" style={{ fontSize: "0.875rem" }}>
               {stat.label}
@@ -100,14 +150,14 @@ export function DashboardHome() {
           <div className="flex justify-center mb-4">
             <div className="p-3 rounded-xl border-2 border-[#10B981]/20 shadow-sm shadow-[#10B981]/10">
               <QRCodeSVG
-                value="https://search.google.com/local/writereview?placeid=EXAMPLE"
+                value={scanUrl || "https://example.com"}
                 size={140}
                 fgColor="#111827"
               />
             </div>
           </div>
           <p className="text-center text-[#6B7280] mb-4" style={{ fontSize: "0.875rem" }}>
-            Joe's Pizza
+            {businessName}
           </p>
           <div className="flex gap-2">
             <button className="flex-1 flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#047857] text-white py-2.5 rounded-lg transition-colors">
@@ -138,31 +188,44 @@ export function DashboardHome() {
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="space-y-3">
-            {recentScans.map((scan) => (
-              <div
-                key={scan.id}
-                className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-[#10B981]/10 rounded-lg flex items-center justify-center">
-                    <Smartphone className="w-4 h-4 text-[#10B981]" />
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 text-[#10B981] animate-spin" />
+            </div>
+          ) : recentScans.length === 0 ? (
+            <div className="text-center py-12">
+              <Smartphone className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-[#6B7280]" style={{ fontSize: "0.875rem" }}>
+                No scans yet. Share your QR code to start collecting reviews!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentScans.map((scan, idx) => (
+                <div
+                  key={`${scan.timestamp}-${idx}`}
+                  className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-[#10B981]/10 rounded-lg flex items-center justify-center">
+                      <Smartphone className="w-4 h-4 text-[#10B981]" />
+                    </div>
+                    <div>
+                      <p className="text-[#111827]" style={{ fontSize: "0.875rem", fontWeight: 500 }}>
+                        {scan.device}
+                      </p>
+                      <p className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
+                        QR Scan
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[#111827]" style={{ fontSize: "0.875rem", fontWeight: 500 }}>
-                      {scan.device}
-                    </p>
-                    <p className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
-                      {scan.location}
-                    </p>
-                  </div>
+                  <span className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
+                    {formatTime(scan.timestamp)}
+                  </span>
                 </div>
-                <span className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
-                  {scan.time}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

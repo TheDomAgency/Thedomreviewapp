@@ -1,19 +1,45 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Mail,
   CreditCard,
   Shield,
   Check,
+  Loader2,
+  MessageCircle,
+  Wallet,
 } from "lucide-react";
+import { useAuth } from "./auth-context";
 
 export function AccountPage() {
-  const [email, setEmail] = useState("joe@joespizza.com");
+  const { profile, updateProfile } = useAuth();
+  const [email, setEmail] = useState(profile?.email || "");
+  const [name, setName] = useState(profile?.name || "");
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const trialInfo = useMemo(() => {
+    if (!profile?.trialStartDate) return { daysRemaining: 10, progress: 0 };
+    const start = new Date(profile.trialStartDate);
+    const now = new Date();
+    const elapsed = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    const remaining = Math.max(0, 10 - elapsed);
+    const progress = Math.min(100, (elapsed / 10) * 100);
+    return { daysRemaining: remaining, progress };
+  }, [profile?.trialStartDate]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const result = await updateProfile({ name: name.trim() });
+    setSaving(false);
+    if (!result.error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
   };
+
+  const initials = (profile?.name || profile?.businessName || profile?.email || "U")
+    .charAt(0)
+    .toUpperCase();
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -32,40 +58,63 @@ export function AccountPage() {
           Profile
         </h3>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 bg-[#10B981] rounded-full flex items-center justify-center text-white" style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-            J
+          <div
+            className="w-16 h-16 bg-[#10B981] rounded-full flex items-center justify-center text-white"
+            style={{ fontSize: "1.5rem", fontWeight: 700 }}
+          >
+            {initials}
           </div>
           <div>
             <p className="text-[#111827]" style={{ fontWeight: 600 }}>
-              Joe's Pizza
+              {profile?.businessName || profile?.name || "Your Business"}
             </p>
             <p className="text-[#6B7280]" style={{ fontSize: "0.875rem" }}>
-              {email}
+              {profile?.email || ""}
             </p>
           </div>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-[#111827] mb-1.5" style={{ fontSize: "0.875rem", fontWeight: 500 }}>
+            <label
+              className="block text-[#111827] mb-1.5"
+              style={{ fontSize: "0.875rem", fontWeight: 500 }}
+            >
+              Your Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/20 outline-none transition-all"
+            />
+          </div>
+          <div>
+            <label
+              className="block text-[#111827] mb-1.5"
+              style={{ fontSize: "0.875rem", fontWeight: 500 }}
+            >
               Email Address
             </label>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/20 outline-none transition-all"
-              />
-              <button
-                onClick={handleSave}
-                className="px-5 py-2.5 bg-[#10B981] hover:bg-[#047857] text-white rounded-lg transition-colors flex items-center gap-2"
-                style={{ fontWeight: 500 }}
-              >
-                {saved ? <Check className="w-4 h-4" /> : null}
-                {saved ? "Saved" : "Save"}
-              </button>
-            </div>
+            <input
+              type="email"
+              value={email}
+              disabled
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-[#6B7280] cursor-not-allowed"
+            />
+            <p className="text-[#6B7280] mt-1" style={{ fontSize: "0.75rem" }}>
+              Email cannot be changed
+            </p>
           </div>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-6 py-2.5 bg-[#10B981] hover:bg-[#047857] disabled:opacity-50 text-white rounded-lg transition-colors flex items-center gap-2"
+            style={{ fontWeight: 500 }}
+          >
+            {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {saved ? <Check className="w-4 h-4" /> : null}
+            {saved ? "Saved!" : "Save Changes"}
+          </button>
         </div>
       </div>
 
@@ -75,6 +124,29 @@ export function AccountPage() {
           Subscription
         </h3>
         <div className="space-y-4">
+          {/* Account Balance */}
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#10B981]/10 to-[#047857]/10 rounded-lg border border-[#10B981]/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#10B981]/20 rounded-lg flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-[#10B981]" />
+              </div>
+              <div>
+                <p className="text-[#111827]" style={{ fontWeight: 600 }}>
+                  Account Balance
+                </p>
+                <p className="text-[#047857]" style={{ fontSize: "0.875rem" }}>
+                  Free credit from signup
+                </p>
+              </div>
+            </div>
+            <span
+              className="text-[#10B981]"
+              style={{ fontSize: "1.25rem", fontWeight: 700 }}
+            >
+              ${(profile?.balance ?? 0).toFixed(2)}
+            </span>
+          </div>
+
           {/* Current Plan */}
           <div className="flex items-center justify-between p-4 bg-[#10B981]/5 rounded-lg border border-[#10B981]/20">
             <div className="flex items-center gap-3">
@@ -83,11 +155,13 @@ export function AccountPage() {
               </div>
               <div>
                 <p className="text-[#111827]" style={{ fontWeight: 600 }}>
-                  Free Trial
+                  {profile?.plan === "trial" ? "Free Trial" : profile?.plan === "starter" ? "Starter Plan" : "Pro Plan"}
                 </p>
-                <p className="text-[#047857]" style={{ fontSize: "0.875rem" }}>
-                  8 days remaining
-                </p>
+                {profile?.plan === "trial" && (
+                  <p className="text-[#047857]" style={{ fontSize: "0.875rem" }}>
+                    {trialInfo.daysRemaining} days remaining
+                  </p>
+                )}
               </div>
             </div>
             <span
@@ -105,7 +179,13 @@ export function AccountPage() {
                 Starter
               </p>
               <p className="text-[#111827] mb-2" style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-                $9<span className="text-[#6B7280]" style={{ fontSize: "0.875rem", fontWeight: 400 }}>/month</span>
+                $8
+                <span
+                  className="text-[#6B7280]"
+                  style={{ fontSize: "0.875rem", fontWeight: 400 }}
+                >
+                  /month
+                </span>
               </p>
               <p className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
                 1 QR code, scan analytics
@@ -122,7 +202,13 @@ export function AccountPage() {
                 Pro
               </p>
               <p className="text-[#111827] mb-2" style={{ fontSize: "1.5rem", fontWeight: 700 }}>
-                $19<span className="text-[#6B7280]" style={{ fontSize: "0.875rem", fontWeight: 400 }}>/month</span>
+                $15
+                <span
+                  className="text-[#6B7280]"
+                  style={{ fontSize: "0.875rem", fontWeight: 400 }}
+                >
+                  /month
+                </span>
               </p>
               <p className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
                 5 QR codes, advanced analytics
@@ -130,13 +216,41 @@ export function AccountPage() {
             </div>
           </div>
 
+          {/* WhatsApp Add-on */}
+          <div className="border border-[#25D366]/30 bg-[#25D366]/5 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-[#25D366]/10 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5 text-[#25D366]" />
+                </div>
+                <div>
+                  <p className="text-[#111827]" style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                    WhatsApp Reviews Add-on
+                  </p>
+                  <p className="text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
+                    $0.49 per message · Bulk import · Team sends for you
+                  </p>
+                </div>
+              </div>
+              <span
+                className="bg-[#25D366] text-white px-3 py-1 rounded-full shrink-0"
+                style={{ fontSize: "0.625rem", fontWeight: 700 }}
+              >
+                ADD-ON
+              </span>
+            </div>
+          </div>
+
           {/* Connect Payment */}
-          <button className="w-full flex items-center justify-center gap-2 bg-[#F59E0B] hover:bg-[#D97706] text-white py-3 rounded-lg transition-colors" style={{ fontWeight: 600 }}>
+          <button
+            className="w-full flex items-center justify-center gap-2 bg-[#F59E0B] hover:bg-[#D97706] text-white py-3 rounded-lg transition-colors"
+            style={{ fontWeight: 600 }}
+          >
             <CreditCard className="w-5 h-5" />
             Connect Payment (Stripe)
           </button>
           <p className="text-center text-[#6B7280]" style={{ fontSize: "0.75rem" }}>
-            Your free trial will continue until it expires. You won't be charged until then.
+            Stripe payment integration coming soon. Your free trial will continue until it expires.
           </p>
         </div>
       </div>

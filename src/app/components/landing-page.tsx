@@ -11,6 +11,7 @@ import {
   Zap,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { useAuth } from "./auth-context";
 
 const heroImage =
   "https://images.unsplash.com/photo-1687422808191-93810cd07ab0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFsbCUyMGJ1c2luZXNzJTIwb3duZXIlMjBoYXBweSUyMGN1c3RvbWVyfGVufDF8fHx8MTc3MzA4NDc4MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
@@ -22,6 +23,8 @@ const salonImage =
   "https://images.unsplash.com/photo-1759134198561-e2041049419c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxvbiUyMGJhcmJlciUyMHNob3AlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NzMwODQ3ODF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 
 export function LandingPage() {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "Inter, sans-serif" }}>
       {/* Navigation */}
@@ -42,25 +45,47 @@ export function LandingPage() {
             <a href="#pricing" className="text-[#6B7280] hover:text-[#111827] transition-colors">
               Pricing
             </a>
+            {user ? (
+              <Link
+                to="/dashboard"
+                className="bg-[#10B981] hover:bg-[#047857] text-white px-5 py-2 rounded-lg transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-[#6B7280] hover:text-[#111827] transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-[#10B981] hover:bg-[#047857] text-white px-5 py-2 rounded-lg transition-colors"
+                >
+                  Start Free Trial
+                </Link>
+              </>
+            )}
+          </div>
+          {user ? (
             <Link
               to="/dashboard"
-              className="text-[#6B7280] hover:text-[#111827] transition-colors"
+              className="md:hidden bg-[#10B981] hover:bg-[#047857] text-white px-4 py-2 rounded-lg transition-colors"
+              style={{ fontWeight: 600 }}
             >
               Dashboard
             </Link>
+          ) : (
             <Link
-              to="/dashboard"
-              className="bg-[#10B981] hover:bg-[#047857] text-white px-5 py-2 rounded-lg transition-colors"
+              to="/signup"
+              className="md:hidden bg-[#10B981] hover:bg-[#047857] text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Start Free Trial
+              Start Free
             </Link>
-          </div>
-          <Link
-            to="/dashboard"
-            className="md:hidden bg-[#10B981] hover:bg-[#047857] text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Start Free
-          </Link>
+          )}
         </div>
       </nav>
 
@@ -87,7 +112,7 @@ export function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <Link
-                  to="/dashboard"
+                  to="/signup"
                   className="inline-flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#047857] text-white px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-[#10B981]/25 hover:shadow-[#10B981]/40"
                   style={{ fontWeight: 600 }}
                 >
@@ -301,7 +326,7 @@ export function LandingPage() {
               Start with a free 10-day trial. No credit card required.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Starter */}
             <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
               <h3 className="text-[#111827] mb-1" style={{ fontWeight: 600 }}>
@@ -312,7 +337,7 @@ export function LandingPage() {
               </p>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="text-[#111827]" style={{ fontSize: "2.5rem", fontWeight: 800 }}>
-                  $9
+                  $8
                 </span>
                 <span className="text-[#6B7280]">/month</span>
               </div>
@@ -330,7 +355,7 @@ export function LandingPage() {
                 ))}
               </ul>
               <Link
-                to="/dashboard"
+                to="/signup"
                 className="block text-center bg-white border-2 border-[#10B981] text-[#10B981] hover:bg-[#10B981] hover:text-white px-6 py-3 rounded-xl transition-colors"
                 style={{ fontWeight: 600 }}
               >
@@ -355,7 +380,7 @@ export function LandingPage() {
               </p>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="text-[#111827]" style={{ fontSize: "2.5rem", fontWeight: 800 }}>
-                  $19
+                  $15
                 </span>
                 <span className="text-[#6B7280]">/month</span>
               </div>
@@ -374,11 +399,55 @@ export function LandingPage() {
                 ))}
               </ul>
               <Link
-                to="/dashboard"
+                to="/signup"
                 className="block text-center bg-[#10B981] hover:bg-[#047857] text-white px-6 py-3 rounded-xl transition-colors shadow-lg shadow-[#10B981]/25"
                 style={{ fontWeight: 600 }}
               >
                 Start Free Trial
+              </Link>
+            </div>
+            {/* WhatsApp Add-on */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm relative">
+              <div className="absolute -top-3 right-6">
+                <span
+                  className="bg-[#25D366] text-white px-4 py-1 rounded-full"
+                  style={{ fontSize: "0.75rem", fontWeight: 700 }}
+                >
+                  ADD-ON
+                </span>
+              </div>
+              <h3 className="text-[#111827] mb-1" style={{ fontWeight: 600 }}>
+                WhatsApp Reviews
+              </h3>
+              <p className="text-[#6B7280] mb-6" style={{ fontSize: "0.875rem" }}>
+                Send review requests via WhatsApp
+              </p>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-[#111827]" style={{ fontSize: "2.5rem", fontWeight: 800 }}>
+                  $0.49
+                </span>
+                <span className="text-[#6B7280]">/message</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "Bulk import contacts",
+                  "Message templates",
+                  "Tracked review links",
+                  "Send history & analytics",
+                  "Team sends it for you",
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-[#111827]">
+                    <CheckCircle className="w-5 h-5 text-[#25D366] shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/signup"
+                className="block text-center bg-white border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white px-6 py-3 rounded-xl transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                Add to Any Plan
               </Link>
             </div>
           </div>
@@ -400,7 +469,7 @@ export function LandingPage() {
               their online reputation.
             </p>
             <Link
-              to="/dashboard"
+              to="/signup"
               className="inline-flex items-center gap-2 bg-white text-[#047857] px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors shadow-lg"
               style={{ fontWeight: 600 }}
             >
