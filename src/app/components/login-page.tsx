@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { QrCode, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "./auth-context";
 
 export function LoginPage() {
   const { signIn, user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Show session expired message if redirected from setup wizard
+  const sessionMessage = (location.state as any)?.message;
 
   // Navigate reactively once user state is committed
   useEffect(() => {
@@ -54,6 +58,11 @@ export function LoginPage() {
 
         <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {sessionMessage && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm">
+                {sessionMessage}
+              </div>
+            )}
             {error && <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm">{error}</div>}
             <div>
               <label className="block text-[#111827] mb-1.5" style={{ fontSize: "0.875rem", fontWeight: 500 }}>

@@ -11,6 +11,9 @@ import {
   LogOut,
   ChevronRight,
   ShieldCheck,
+  Crown,
+  Shield,
+  Plus,
 } from "lucide-react";
 import { useAuth } from "./auth-context";
 
@@ -18,7 +21,7 @@ const ADMIN_EMAIL = "sabbyzaman29@gmail.com";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-  { label: "My QR Code", icon: QrCode, path: "/dashboard/qr-code" },
+  { label: "My QR Codes", icon: QrCode, path: "/dashboard/qr-code" },
   { label: "WhatsApp", icon: MessageCircle, path: "/dashboard/whatsapp" },
   { label: "Analytics", icon: BarChart3, path: "/dashboard/analytics" },
   { label: "Account", icon: User, path: "/dashboard/account" },
@@ -115,23 +118,69 @@ export function DashboardLayout() {
           )}
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
-          {profile?.plan === "trial" && (
-            <div className="bg-[#10B981]/10 rounded-lg p-3 mb-3">
-              <p className="text-[#047857]" style={{ fontSize: "0.75rem", fontWeight: 600 }}>
-                FREE TRIAL
-              </p>
-              <p className="text-[#047857]" style={{ fontSize: "0.875rem" }}>
-                {trialInfo.daysRemaining} days remaining
-              </p>
-              <div className="mt-2 h-1.5 bg-[#10B981]/20 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#10B981] rounded-full transition-all"
-                  style={{ width: `${trialInfo.progress}%` }}
-                />
-              </div>
+        <div className="p-4 border-t border-gray-100 space-y-3">
+          {/* Plan & Balance Card */}
+          <div className="bg-gradient-to-br from-[#10B981]/10 to-[#047857]/5 rounded-lg p-3 border border-[#10B981]/20">
+            {/* Plan Badge */}
+            <div className="flex items-center gap-2 mb-2">
+              {profile?.plan === "pro" ? (
+                <Crown className="w-4 h-4 text-[#F59E0B]" />
+              ) : profile?.plan === "starter" ? (
+                <Shield className="w-4 h-4 text-[#10B981]" />
+              ) : (
+                <Shield className="w-4 h-4 text-[#6B7280]" />
+              )}
+              <span
+                className={`px-2 py-0.5 rounded-full text-white ${
+                  profile?.plan === "pro"
+                    ? "bg-[#F59E0B]"
+                    : profile?.plan === "starter"
+                    ? "bg-[#10B981]"
+                    : "bg-[#6B7280]"
+                }`}
+                style={{ fontSize: "0.625rem", fontWeight: 700, textTransform: "uppercase" }}
+              >
+                {profile?.plan || "trial"} plan
+              </span>
             </div>
-          )}
+
+            {/* Trial progress */}
+            {profile?.plan === "trial" && (
+              <div className="mb-2">
+                <p className="text-[#047857]" style={{ fontSize: "0.7rem", fontWeight: 500 }}>
+                  {trialInfo.daysRemaining} days remaining
+                </p>
+                <div className="mt-1 h-1 bg-[#10B981]/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#10B981] rounded-full transition-all"
+                    style={{ width: `${trialInfo.progress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Balance */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[#6B7280]" style={{ fontSize: "0.625rem", fontWeight: 500 }}>
+                  Balance
+                </p>
+                <p className="text-[#111827]" style={{ fontSize: "1.125rem", fontWeight: 700 }}>
+                  ${(profile?.balance ?? 0).toFixed(2)}
+                </p>
+              </div>
+              <Link
+                to="/dashboard/account"
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center gap-1 bg-[#F59E0B] hover:bg-[#D97706] text-white px-3 py-1.5 rounded-lg transition-colors"
+                style={{ fontSize: "0.75rem", fontWeight: 600 }}
+              >
+                <Plus className="w-3 h-3" />
+                Top Up
+              </Link>
+            </div>
+          </div>
+
           <button
             onClick={handleSignOut}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#6B7280] hover:bg-gray-50 hover:text-[#111827] transition-colors"

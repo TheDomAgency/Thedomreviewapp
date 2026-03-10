@@ -326,7 +326,7 @@ export function LandingPage() {
               Start with a free 10-day trial. No credit card required.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Starter */}
             <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
               <h3 className="text-[#111827] mb-1" style={{ fontWeight: 600 }}>
@@ -422,18 +422,20 @@ export function LandingPage() {
               <p className="text-[#6B7280] mb-6" style={{ fontSize: "0.875rem" }}>
                 Send review requests via WhatsApp
               </p>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-[#111827]" style={{ fontSize: "2.5rem", fontWeight: 800 }}>
-                  $0.49
+              <div className="mb-2">
+                <span className="text-[#25D366]" style={{ fontSize: "2.5rem", fontWeight: 800 }}>
+                  Free
                 </span>
-                <span className="text-[#6B7280]">/message</span>
               </div>
+              <p className="text-[#6B7280] mb-6" style={{ fontSize: "0.8125rem" }}>
+                Sending is free · Import at <span className="text-[#111827] font-semibold">$0.0001</span>/contact
+              </p>
               <ul className="space-y-3 mb-8">
                 {[
-                  "Bulk import contacts",
+                  "Free to send messages",
+                  "Bulk import at $0.0001/contact",
                   "Message templates",
                   "Tracked review links",
-                  "Send history & analytics",
                   "Team sends it for you",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-[#111827]">
@@ -445,6 +447,54 @@ export function LandingPage() {
               <Link
                 to="/signup"
                 className="block text-center bg-white border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white px-6 py-3 rounded-xl transition-colors"
+                style={{ fontWeight: 600 }}
+              >
+                Add to Any Plan
+              </Link>
+            </div>
+            {/* QR Code Add-on */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm relative">
+              <div className="absolute -top-3 right-6">
+                <span
+                  className="bg-[#F59E0B] text-white px-4 py-1 rounded-full"
+                  style={{ fontSize: "0.75rem", fontWeight: 700 }}
+                >
+                  ADD-ON
+                </span>
+              </div>
+              <h3 className="text-[#111827] mb-1" style={{ fontWeight: 600 }}>
+                Extra QR Code
+              </h3>
+              <p className="text-[#6B7280] mb-6" style={{ fontSize: "0.875rem" }}>
+                Need more QR codes beyond your plan?
+              </p>
+              <div className="mb-2">
+                <span className="text-[#F59E0B]" style={{ fontSize: "2.5rem", fontWeight: 800 }}>
+                  $5
+                </span>
+                <span className="text-[#6B7280] ml-1" style={{ fontSize: "1rem" }}>
+                  per QR code
+                </span>
+              </div>
+              <p className="text-[#6B7280] mb-6" style={{ fontSize: "0.8125rem" }}>
+                One-time purchase · Deducted from balance
+              </p>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "Buy as many as you need",
+                  "Works with any plan",
+                  "Deducted from account balance",
+                  "Each QR links to a unique location",
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-[#111827]">
+                    <CheckCircle className="w-5 h-5 text-[#F59E0B] shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/signup"
+                className="block text-center bg-white border-2 border-[#F59E0B] text-[#F59E0B] hover:bg-[#F59E0B] hover:text-white px-6 py-3 rounded-xl transition-colors"
                 style={{ fontWeight: 600 }}
               >
                 Add to Any Plan

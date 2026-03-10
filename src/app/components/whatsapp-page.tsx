@@ -62,7 +62,7 @@ const DEFAULT_TEMPLATES = [
   },
 ];
 
-const COST_PER_MESSAGE = 0.49;
+const COST_PER_IMPORT = 0.0001;
 
 export function WhatsAppPage() {
   const { profile, user, apiCall } = useAuth();
@@ -326,12 +326,11 @@ export function WhatsAppPage() {
               className="text-[#111827]"
               style={{ fontWeight: 600, fontSize: "0.875rem" }}
             >
-              WhatsApp Add-on Pricing
+              WhatsApp Reviews
             </p>
             <p className="text-[#6B7280]" style={{ fontSize: "0.8125rem" }}>
-              <span className="text-[#111827] font-bold">$0.49</span> per
-              message sent · Tracked review links included · Available on any
-              plan
+              <span className="text-[#25D366] font-bold">FREE</span> to send messages ·
+              Import contacts at <span className="text-[#111827] font-bold">$0.0001</span>/contact
             </p>
           </div>
         </div>
@@ -340,10 +339,10 @@ export function WhatsAppPage() {
             className="text-[#111827]"
             style={{ fontSize: "1.125rem", fontWeight: 700 }}
           >
-            ${(totalSent * COST_PER_MESSAGE).toFixed(2)}
+            {totalSent}
           </p>
           <p className="text-[#6B7280]" style={{ fontSize: "0.6875rem" }}>
-            {totalSent} messages sent
+            messages sent
           </p>
         </div>
       </div>
@@ -509,10 +508,10 @@ export function WhatsAppPage() {
                         Cost for this message
                       </span>
                       <span
-                        className="text-[#111827]"
+                        className="text-[#25D366]"
                         style={{ fontWeight: 600 }}
                       >
-                        $0.49
+                        FREE
                       </span>
                     </div>
                     <button
@@ -522,7 +521,7 @@ export function WhatsAppPage() {
                       style={{ fontWeight: 600 }}
                     >
                       <Send className="w-4 h-4" />
-                      Send via WhatsApp · $0.49
+                      Send via WhatsApp — Free
                     </button>
                   </div>
 
@@ -606,10 +605,10 @@ export function WhatsAppPage() {
                             {validManualCount !== 1 ? "s" : ""}
                           </span>
                           <span
-                            className="text-[#111827]"
+                            className="text-[#25D366]"
                             style={{ fontWeight: 600 }}
                           >
-                            ${(validManualCount * COST_PER_MESSAGE).toFixed(2)}
+                            FREE
                           </span>
                         </div>
                         <button
@@ -624,8 +623,7 @@ export function WhatsAppPage() {
                             <Send className="w-4 h-4" />
                           )}
                           Send to {validManualCount} Contact
-                          {validManualCount !== 1 ? "s" : ""} · $
-                          {(validManualCount * COST_PER_MESSAGE).toFixed(2)}
+                          {validManualCount !== 1 ? "s" : ""} — Free
                         </button>
                       </>
                     )}
@@ -775,15 +773,15 @@ export function WhatsAppPage() {
                           className="text-[#6B7280]"
                           style={{ fontSize: "0.8125rem" }}
                         >
-                          Estimated cost
+                          Import cost ({importedContacts.length} contacts)
                         </span>
                         <span
                           className="text-[#111827]"
                           style={{ fontWeight: 700 }}
                         >
                           $
-                          {(importedContacts.length * COST_PER_MESSAGE).toFixed(
-                            2
+                          {(importedContacts.length * COST_PER_IMPORT).toFixed(
+                            4
                           )}
                         </span>
                       </div>
@@ -798,9 +796,9 @@ export function WhatsAppPage() {
                         ) : (
                           <Send className="w-4 h-4" />
                         )}
-                        Send to All {importedContacts.length} Contacts · $
-                        {(importedContacts.length * COST_PER_MESSAGE).toFixed(
-                          2
+                        Import & Send to {importedContacts.length} Contacts · $
+                        {(importedContacts.length * COST_PER_IMPORT).toFixed(
+                          4
                         )}
                       </button>
                     </div>
@@ -977,7 +975,7 @@ export function WhatsAppPage() {
                             className="text-[#6B7280]"
                             style={{ fontSize: "0.8125rem" }}
                           >
-                            Estimated cost ({parseCSV(csvText).length} messages)
+                            Import cost ({parseCSV(csvText).length} contacts)
                           </span>
                           <span
                             className="text-[#111827]"
@@ -985,8 +983,8 @@ export function WhatsAppPage() {
                           >
                             $
                             {(
-                              parseCSV(csvText).length * COST_PER_MESSAGE
-                            ).toFixed(2)}
+                              parseCSV(csvText).length * COST_PER_IMPORT
+                            ).toFixed(4)}
                           </span>
                         </div>
                       )}
@@ -1011,8 +1009,7 @@ export function WhatsAppPage() {
                         className="text-[#6B7280] text-center"
                         style={{ fontSize: "0.75rem" }}
                       >
-                        Same $0.49/message pricing · No extra fees for team
-                        handling
+                        Sending is free · Import costs $0.0001/contact · No extra fees for team handling
                       </p>
                     </>
                   )}

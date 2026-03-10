@@ -13,7 +13,9 @@ import {
   Wallet,
 } from "lucide-react";
 import { useAuth } from "./auth-context";
-import { projectId } from "/utils/supabase/info";
+import { projectId, publicAnonKey } from "/utils/supabase/info";
+
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-6cea9865`;
 
 interface Scan {
   timestamp: string;
@@ -70,9 +72,12 @@ export function DashboardHome() {
   };
 
   const businessName = profile?.businessName || "Your Business";
-  const scanUrl = user?.id
-    ? `https://${projectId}.supabase.co/functions/v1/make-server-6cea9865/r/${user.id}`
-    : "";
+  // QR code encodes the user's actual Google review link directly
+  const firstQR = profile?.qrCodes?.[0];
+  const scanUrl = firstQR?.reviewLink || profile?.reviewLink || "";
+  const qrBusinessName = firstQR?.businessName || businessName;
+  const qrCount = profile?.qrCodes?.length || (scanUrl ? 1 : 0);
+  const maxQR = profile?.plan === "pro" ? 5 : 1;
 
   return (
     <div className="space-y-6">
@@ -98,8 +103,8 @@ export function DashboardHome() {
             </div>
           </div>
           <div className="text-right">
-            <p style={{ fontSize: "0.75rem", opacity: 0.8 }}>Free credit applied on signup</p>
-            <p style={{ fontSize: "0.875rem", fontWeight: 600 }}>Use for WhatsApp messages</p>
+            <p style={{ fontSize: "0.75rem", opacity: 0.8 }}>Add funds for contact imports</p>
+            <p style={{ fontSize: "0.875rem", fontWeight: 600 }}>$0.0001 per contact</p>
           </div>
         </div>
       )}
@@ -145,19 +150,32 @@ export function DashboardHome() {
         {/* QR Code Preview */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h3 className="text-[#111827] mb-4" style={{ fontWeight: 600 }}>
-            Your QR Code
+            Your QR Code{qrCount > 1 ? "s" : ""}
           </h3>
+          {qrCount > 1 && (
+            <p className="text-[#6B7280] text-center mb-3" style={{ fontSize: "0.75rem" }}>
+              {qrCount}/{maxQR} QR codes
+            </p>
+          )}
           <div className="flex justify-center mb-4">
-            <div className="p-3 rounded-xl border-2 border-[#10B981]/20 shadow-sm shadow-[#10B981]/10">
-              <QRCodeSVG
-                value={scanUrl || "https://example.com"}
-                size={140}
-                fgColor="#111827"
-              />
-            </div>
+            {scanUrl ? (
+              <div className="p-3 rounded-xl border-2 border-[#10B981]/20 shadow-sm shadow-[#10B981]/10">
+                <QRCodeSVG
+                  value={scanUrl}
+                  size={140}
+                  fgColor="#111827"
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center w-[164px] h-[164px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 px-3">
+                <p className="text-[#6B7280] text-center" style={{ fontSize: "0.75rem" }}>
+                  Set up your review link to generate a QR code
+                </p>
+              </div>
+            )}
           </div>
           <p className="text-center text-[#6B7280] mb-4" style={{ fontSize: "0.875rem" }}>
-            {businessName}
+            {qrBusinessName}
           </p>
           <div className="flex gap-2">
             <button className="flex-1 flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#047857] text-white py-2.5 rounded-lg transition-colors">

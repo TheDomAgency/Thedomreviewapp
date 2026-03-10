@@ -1,5 +1,5 @@
 import { Navigate } from "react-router";
-import { useAuth, isSetupCompleteOverride } from "./auth-context";
+import { useAuth } from "./auth-context";
 import { Loader2 } from "lucide-react";
 
 function Spinner({ text = "Loading..." }: { text?: string }) {
@@ -18,24 +18,4 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (loading) return <Spinner />;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
-}
-
-export function SetupGuard({ children }: { children: React.ReactNode }) {
-  const { user, profile, loading } = useAuth();
-
-  if (loading) return <Spinner />;
-  if (!user) return <Navigate to="/login" replace />;
-  if (!profile) return <Navigate to="/login" replace />;
-
-  // Allow through if:
-  // 1. Profile flag is true (normal case), OR
-  // 2. The synchronous module-level override is set (handles React state batching
-  //    race where TOKEN_REFRESHED can transiently reset setupComplete to false
-  //    before the React state from updateProfile() has been committed).
-  if (profile.setupComplete || isSetupCompleteOverride()) {
-    return <>{children}</>;
-  }
-
-  // Setup not complete — send to wizard
-  return <Navigate to="/dashboard/setup" replace />;
 }

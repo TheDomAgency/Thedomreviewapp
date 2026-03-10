@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { QrCode, Eye, EyeOff, Loader2, Shield, CheckCircle, Gift } from "lucide-react";
+import { QrCode, Eye, EyeOff, Loader2, Shield, CheckCircle } from "lucide-react";
 import { useAuth } from "./auth-context";
 
 export function SignupPage() {
@@ -51,7 +51,7 @@ export function SignupPage() {
           <h1 className="text-[#111827] mb-2" style={{ fontSize: "1.5rem", fontWeight: 700 }}>
             Start your free trial
           </h1>
-          <p className="text-[#6B7280]">10 days free + $10 credit. No credit card required.</p>
+          <p className="text-[#6B7280]">10 days free. No credit card required.</p>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
@@ -124,10 +124,6 @@ export function SignupPage() {
             <div className="flex items-center gap-1">
               <CheckCircle className="w-3.5 h-3.5 text-[#10B981]" />
               10-day free trial
-            </div>
-            <div className="flex items-center gap-1">
-              <Gift className="w-3.5 h-3.5 text-[#F59E0B]" />
-              $10 free credit
             </div>
           </div>
         </div>
