@@ -28,10 +28,10 @@ export function LandingPage() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "Inter, sans-serif" }}>
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100" style={{ borderTop: "3px solid #10B981" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#10B981] rounded-lg flex items-center justify-center">
+            <div className="w-9 h-9 bg-gradient-to-br from-[#10B981] to-[#047857] rounded-xl flex items-center justify-center shadow-md shadow-[#10B981]/30">
               <QrCode className="w-5 h-5 text-white" />
             </div>
             <span className="text-[#111827]" style={{ fontSize: "1.125rem", fontWeight: 700 }}>
@@ -91,11 +91,12 @@ export function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/5 via-transparent to-[#F59E0B]/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/8 via-white to-[#F59E0B]/8" />
+        <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, rgba(16,185,129,0.07) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(245,158,11,0.07) 0%, transparent 50%)" }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 bg-[#10B981]/10 text-[#047857] px-4 py-1.5 rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 bg-[#10B981]/10 text-[#047857] px-4 py-1.5 rounded-full mb-6 border border-[#10B981]/20">
                 <Zap className="w-4 h-4" />
                 <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Built for small businesses</span>
               </div>
@@ -113,8 +114,8 @@ export function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <Link
                   to="/signup"
-                  className="inline-flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#047857] text-white px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-[#10B981]/25 hover:shadow-[#10B981]/40"
-                  style={{ fontWeight: 600 }}
+                  className="inline-flex items-center justify-center gap-2 text-white px-8 py-3.5 rounded-xl transition-all shadow-xl hover:-translate-y-0.5 hover:shadow-2xl"
+                  style={{ fontWeight: 700, background: "linear-gradient(135deg, #10B981 0%, #047857 100%)", boxShadow: "0 8px 24px rgba(16,185,129,0.35)" }}
                 >
                   Start Free 10-Day Trial
                   <ArrowRight className="w-5 h-5" />
@@ -141,7 +142,26 @@ export function LandingPage() {
 
             {/* QR Demo Preview */}
             <div className="relative flex justify-center lg:justify-end">
-              <div className="bg-white rounded-2xl shadow-2xl shadow-gray-200/50 border border-gray-100 p-8 max-w-sm w-full">
+              {/* Floating new review notification */}
+              <div className="absolute -top-4 -left-4 lg:-left-10 z-20 bg-white rounded-2xl shadow-xl border border-gray-100 px-4 py-3 flex items-center gap-3" style={{ minWidth: "180px" }}>
+                <div className="w-9 h-9 bg-[#10B981]/10 rounded-full flex items-center justify-center shrink-0">
+                  <Star className="w-5 h-5 text-[#F59E0B] fill-[#F59E0B]" />
+                </div>
+                <div>
+                  <p className="text-[#111827]" style={{ fontSize: "0.8rem", fontWeight: 600, lineHeight: 1.2 }}>New Review!</p>
+                  <div className="flex gap-0.5 mt-0.5">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="w-3 h-3 text-[#F59E0B] fill-[#F59E0B]" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {/* Scan count badge */}
+              <div className="absolute -bottom-3 -right-3 lg:-right-6 z-20 bg-gradient-to-br from-[#10B981] to-[#047857] rounded-2xl shadow-lg shadow-[#10B981]/30 px-4 py-2.5">
+                <p className="text-white/80" style={{ fontSize: "0.7rem", fontWeight: 500 }}>This week</p>
+                <p className="text-white" style={{ fontSize: "1.1rem", fontWeight: 800, lineHeight: 1.2 }}>47 scans</p>
+              </div>
+              <div className="bg-white rounded-3xl shadow-2xl shadow-gray-300/60 border border-gray-100 p-8 max-w-sm w-full relative" style={{ background: "linear-gradient(145deg, #ffffff 0%, #f9fffe 100%)" }}>
                 <div className="text-center mb-6">
                   <p className="text-[#6B7280] mb-1" style={{ fontSize: "0.875rem" }}>
                     Your customers see this:
@@ -151,41 +171,45 @@ export function LandingPage() {
                   </h3>
                 </div>
                 <div className="flex justify-center mb-6">
-                  <div className="p-4 bg-white rounded-xl border-2 border-[#10B981]/20 shadow-lg shadow-[#10B981]/10">
-                    <QRCodeSVG
-                      value="https://search.google.com/local/writereview?placeid=EXAMPLE"
-                      size={180}
-                      fgColor="#111827"
-                      bgColor="#ffffff"
-                    />
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-2xl bg-[#10B981]/20 blur-lg scale-110" />
+                    <div className="relative p-4 bg-white rounded-2xl border-2 border-[#10B981]/30 shadow-lg">
+                      <QRCodeSVG
+                        value="https://search.google.com/local/writereview?placeid=EXAMPLE"
+                        size={180}
+                        fgColor="#111827"
+                        bgColor="#ffffff"
+                      />
+                    </div>
                   </div>
                 </div>
                 <p className="text-center text-[#6B7280]" style={{ fontSize: "0.875rem" }}>
                   Scan to leave us a Google Review!
                 </p>
-                <div className="mt-4 flex justify-center">
-                  <div className="flex -space-x-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star
-                        key={i}
-                        className="w-5 h-5 text-[#F59E0B] fill-[#F59E0B]"
-                      />
-                    ))}
-                  </div>
+                <div className="mt-4 flex justify-center gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star
+                      key={i}
+                      className="w-5 h-5 text-[#F59E0B] fill-[#F59E0B]"
+                    />
+                  ))}
                 </div>
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#10B981]/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#F59E0B]/10 rounded-full blur-2xl" />
+              <div className="absolute -top-8 -right-8 w-36 h-36 bg-[#10B981]/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-[#F59E0B]/10 rounded-full blur-3xl" />
             </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-20 bg-gray-50/50">
+      <section id="how-it-works" className="py-20" style={{ background: "linear-gradient(180deg, #f9fffe 0%, #ffffff 100%)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 text-[#047857] px-4 py-1.5 rounded-full mb-4 border border-[#10B981]/20">
+              <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Simple setup</span>
+            </div>
             <h2
               className="text-[#111827] mb-4"
               style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700 }}
@@ -196,7 +220,9 @@ export function LandingPage() {
               Get more Google reviews in three simple steps
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="relative grid md:grid-cols-3 gap-8">
+            {/* Connector line between cards (desktop only) */}
+            <div className="hidden md:block absolute top-16 left-1/3 right-1/3 h-0.5 z-0" style={{ background: "repeating-linear-gradient(90deg, #10B981 0, #10B981 8px, transparent 8px, transparent 16px)" }} />
             {[
               {
                 icon: LinkIcon,
@@ -219,17 +245,17 @@ export function LandingPage() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="relative bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="relative bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 z-10"
               >
-                <div className="absolute -top-4 left-8">
+                <div className="absolute -top-5 left-8">
                   <div
-                    className="w-8 h-8 bg-[#10B981] rounded-full flex items-center justify-center text-white"
-                    style={{ fontSize: "0.875rem", fontWeight: 700 }}
+                    className="w-10 h-10 bg-gradient-to-br from-[#10B981] to-[#047857] rounded-full flex items-center justify-center text-white shadow-lg shadow-[#10B981]/30"
+                    style={{ fontSize: "1rem", fontWeight: 700 }}
                   >
                     {item.step}
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-[#10B981]/10 rounded-xl flex items-center justify-center mb-5 mt-2">
+                <div className="w-12 h-12 bg-[#10B981]/10 rounded-xl flex items-center justify-center mb-5 mt-3">
                   <item.icon className="w-6 h-6 text-[#10B981]" />
                 </div>
                 <h3 className="text-[#111827] mb-2" style={{ fontWeight: 600 }}>
@@ -245,16 +271,20 @@ export function LandingPage() {
       </section>
 
       {/* Social Proof */}
-      <section className="py-20">
+      <section className="py-20" style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-white/10 text-white/90 px-4 py-1.5 rounded-full mb-4 border border-white/20">
+              <Star className="w-4 h-4 text-[#F59E0B] fill-[#F59E0B]" />
+              <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>Real results</span>
+            </div>
             <h2
-              className="text-[#111827] mb-4"
+              className="text-white mb-4"
               style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700 }}
             >
               Trusted by Local Businesses
             </h2>
-            <p className="text-[#6B7280] max-w-xl mx-auto" style={{ fontSize: "1.125rem" }}>
+            <p className="text-white/70 max-w-xl mx-auto" style={{ fontSize: "1.125rem" }}>
               Restaurants, salons, auto repair shops, dentists and more
             </p>
           </div>
@@ -281,7 +311,7 @@ export function LandingPage() {
             ].map((t) => (
               <div
                 key={t.name}
-                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200"
               >
                 <div className="h-48 overflow-hidden">
                   <ImageWithFallback
@@ -363,10 +393,11 @@ export function LandingPage() {
               </Link>
             </div>
             {/* Pro */}
-            <div className="relative bg-white rounded-2xl border-2 border-[#10B981] p-8 shadow-lg shadow-[#10B981]/10">
+            <div className="relative rounded-2xl p-8 shadow-xl shadow-[#10B981]/20" style={{ background: "linear-gradient(145deg, #ffffff 0%, #f0fdf8 100%)", border: "2px solid #10B981" }}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981]/5 rounded-full -translate-y-1/2 translate-x-1/2 overflow-hidden rounded-2xl" />
               <div className="absolute -top-3 right-6">
                 <span
-                  className="bg-[#F59E0B] text-white px-4 py-1 rounded-full"
+                  className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white px-4 py-1 rounded-full shadow-md"
                   style={{ fontSize: "0.75rem", fontWeight: 700 }}
                 >
                   POPULAR
@@ -400,7 +431,7 @@ export function LandingPage() {
               </ul>
               <Link
                 to="/signup"
-                className="block text-center bg-[#10B981] hover:bg-[#047857] text-white px-6 py-3 rounded-xl transition-colors shadow-lg shadow-[#10B981]/25"
+                className="block text-center bg-gradient-to-r from-[#10B981] to-[#047857] hover:from-[#047857] hover:to-[#065F46] text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-[#10B981]/30"
                 style={{ fontWeight: 600 }}
               >
                 Start Free Trial
@@ -507,25 +538,32 @@ export function LandingPage() {
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-gradient-to-br from-[#10B981] to-[#047857] rounded-3xl p-12 lg:p-16">
-            <h2
-              className="text-white mb-4"
-              style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700 }}
-            >
-              Ready to Get More Reviews?
-            </h2>
-            <p className="text-white/80 mb-8 max-w-lg mx-auto" style={{ fontSize: "1.125rem" }}>
-              Join hundreds of local businesses using The Dom Review App to grow
-              their online reputation.
-            </p>
-            <Link
-              to="/signup"
-              className="inline-flex items-center gap-2 bg-white text-[#047857] px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors shadow-lg"
-              style={{ fontWeight: 600 }}
-            >
-              Start Free 10-Day Trial
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+          <div className="relative bg-gradient-to-br from-[#10B981] to-[#064E3B] rounded-3xl p-12 lg:p-16 overflow-hidden">
+            {/* Decorative circles */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full translate-x-1/3 -translate-y-1/3" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-1/4 translate-y-1/4" />
+            <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-[#F59E0B]/10 rounded-full blur-xl" />
+            <div className="relative z-10">
+              <h2
+                className="text-white mb-4"
+                style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 700 }}
+              >
+                Ready to Get More Reviews?
+              </h2>
+              <p className="text-white/80 mb-8 max-w-lg mx-auto" style={{ fontSize: "1.125rem" }}>
+                Join hundreds of local businesses using The Dom Review App to grow
+                their online reputation.
+              </p>
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 bg-white text-[#047857] px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+                style={{ fontWeight: 700 }}
+              >
+                Start Free 10-Day Trial
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <p className="text-white/50 mt-4" style={{ fontSize: "0.8rem" }}>No credit card required · Cancel anytime</p>
+            </div>
           </div>
         </div>
       </section>
